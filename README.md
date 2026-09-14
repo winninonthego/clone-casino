@@ -24,6 +24,7 @@ Full-stack casino engine with admin panel, user wallet, and game integration. De
 - **Framework**: React 18
 - **Routing**: React Router
 - **HTTP Client**: Axios
+- **Version**: Comfy-Org/ComfyUI_frontend@latest
 
 ### Telegram Bot
 - **Library**: Telegraf
