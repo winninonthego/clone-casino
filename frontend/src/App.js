@@ -7,6 +7,7 @@ import DashboardPage from './pages/DashboardPage';
 import AdminPage from './pages/AdminPage';
 import GamesPage from './pages/GamesPage';
 import WalletPage from './pages/WalletPage';
+import PaymentPage from './pages/PaymentPage';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(!!localStorage.getItem('token'));
@@ -36,6 +37,7 @@ function App() {
           <Route path="/admin" element={isLoggedIn ? <AdminPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />} />
           <Route path="/games" element={isLoggedIn ? <GamesPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />} />
           <Route path="/wallet" element={isLoggedIn ? <WalletPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />} />
+          <Route path="/payments" element={isLoggedIn ? <PaymentPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />} />
           <Route path="/" element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />} />
         </Routes>
       </div>
