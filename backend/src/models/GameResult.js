@@ -2,24 +2,355 @@ const pool = require('../config/database');
 const Wallet = require('./Wallet');
 
 class GameResult {
-  // Slots game logic
+  // ===== SLOT GAMES =====
+
+  // Buffalo Gold Slot
+  static playBuffaloGold(betAmount) {
+    const symbols = ['🦬', '🪶', '💛', '⭐', '🔔'];
+    const reels = Array.from({ length: 5 }, () => symbols[Math.floor(Math.random() * symbols.length)]);
+    const wildcardSymbol = '🦬';
+    const wildcardCount = reels.filter((s) => s === wildcardSymbol).length;
+
+    let multiplier = 0;
+    if (wildcardCount >= 4) {
+      multiplier = 25; // GRAND JACKPOT
+    } else if (wildcardCount === 3) {
+      multiplier = 10;
+    } else if (wildcardCount === 2) {
+      multiplier = 3;
+    } else if (wildcardCount === 1) {
+      multiplier = 1.5;
+    }
+
+    const winAmount = betAmount * multiplier;
+    return {
+      game: 'Buffalo Gold',
+      reels,
+      wildcardCount,
+      multiplier,
+      betAmount,
+      winAmount,
+      result: multiplier > 0 ? 'WIN' : 'LOSS',
+    };
+  }
+
+  // Dragons Gold Slot
+  static playDragonsGold(betAmount) {
+    const symbols = ['🐉', '💎', '👑', '🎆', '✨'];
+    const reels = Array.from({ length: 5 }, () => symbols[Math.floor(Math.random() * symbols.length)]);
+    const dragonCount = reels.filter((s) => s === '🐉').length;
+
+    let multiplier = 0;
+    if (dragonCount >= 4) {
+      multiplier = 30; // DRAGON FURY
+    } else if (dragonCount === 3) {
+      multiplier = 12;
+    } else if (dragonCount === 2) {
+      multiplier = 4;
+    }
+
+    const winAmount = betAmount * multiplier;
+    return {
+      game: 'Dragons Gold',
+      reels,
+      dragonCount,
+      multiplier,
+      betAmount,
+      winAmount,
+      result: multiplier > 0 ? 'WIN' : 'LOSS',
+    };
+  }
+
+  // Panda Gold Slot
+  static playPandaGold(betAmount) {
+    const symbols = ['🐼', '🎋', '🏮', '🥟', '☯️'];
+    const reels = Array.from({ length: 5 }, () => symbols[Math.floor(Math.random() * symbols.length)]);
+    const pandaCount = reels.filter((s) => s === '🐼').length;
+
+    let multiplier = 0;
+    if (pandaCount >= 4) {
+      multiplier = 20; // PANDA PARADISE
+    } else if (pandaCount === 3) {
+      multiplier = 8;
+    } else if (pandaCount === 2) {
+      multiplier = 3;
+    }
+
+    const winAmount = betAmount * multiplier;
+    return {
+      game: 'Panda Gold',
+      reels,
+      pandaCount,
+      multiplier,
+      betAmount,
+      winAmount,
+      result: multiplier > 0 ? 'WIN' : 'LOSS',
+    };
+  }
+
+  // Wild West Slot
+  static playWildWest(betAmount) {
+    const symbols = ['🤠', '🌵', '💰', '🔫', '⭐'];
+    const reels = Array.from({ length: 5 }, () => symbols[Math.floor(Math.random() * symbols.length)]);
+    const sheriffCount = reels.filter((s) => s === '🤠').length;
+
+    let multiplier = 0;
+    if (sheriffCount >= 4) {
+      multiplier = 22;
+    } else if (sheriffCount === 3) {
+      multiplier = 9;
+    } else if (sheriffCount === 2) {
+      multiplier = 3.5;
+    }
+
+    const winAmount = betAmount * multiplier;
+    return {
+      game: 'Wild West',
+      reels,
+      sheriffCount,
+      multiplier,
+      betAmount,
+      winAmount,
+      result: multiplier > 0 ? 'WIN' : 'LOSS',
+    };
+  }
+
+  // Golden Coins Slot
+  static playGoldenCoins(betAmount) {
+    const symbols = ['🪙', '👑', '💍', '🏺', '⚜️'];
+    const reels = Array.from({ length: 5 }, () => symbols[Math.floor(Math.random() * symbols.length)]);
+    const coinCount = reels.filter((s) => s === '🪙').length;
+
+    let multiplier = 0;
+    if (coinCount >= 4) {
+      multiplier = 18;
+    } else if (coinCount === 3) {
+      multiplier = 7;
+    } else if (coinCount === 2) {
+      multiplier = 2.5;
+    }
+
+    const winAmount = betAmount * multiplier;
+    return {
+      game: 'Golden Coins',
+      reels,
+      coinCount,
+      multiplier,
+      betAmount,
+      winAmount,
+      result: multiplier > 0 ? 'WIN' : 'LOSS',
+    };
+  }
+
+  // Rainbow Riches Slot
+  static playRainbowRiches(betAmount) {
+    const symbols = ['🌈', '☘️', '🍀', '💚', '⭐'];
+    const reels = Array.from({ length: 5 }, () => symbols[Math.floor(Math.random() * symbols.length)]);
+    const rainbowCount = reels.filter((s) => s === '🌈').length;
+
+    let multiplier = 0;
+    if (rainbowCount >= 4) {
+      multiplier = 28;
+    } else if (rainbowCount === 3) {
+      multiplier = 11;
+    } else if (rainbowCount === 2) {
+      multiplier = 3.5;
+    }
+
+    const winAmount = betAmount * multiplier;
+    return {
+      game: 'Rainbow Riches',
+      reels,
+      rainbowCount,
+      multiplier,
+      betAmount,
+      winAmount,
+      result: multiplier > 0 ? 'WIN' : 'LOSS',
+    };
+  }
+
+  // ===== FISH TABLE GAMES =====
+
+  // Sea Striker (Fish Table)
+  static playSeaStriker(betAmount) {
+    const fishTypes = [
+      { symbol: '🐠', points: 10, rarity: 'common' },
+      { symbol: '🦑', points: 25, rarity: 'rare' },
+      { symbol: '🐙', points: 50, rarity: 'very_rare' },
+      { symbol: '🦈', points: 100, rarity: 'legendary' },
+      { symbol: '🐋', points: 250, rarity: 'mythical' },
+    ];
+
+    const catch1 = fishTypes[Math.floor(Math.random() * fishTypes.length)];
+    const catch2 = fishTypes[Math.floor(Math.random() * fishTypes.length)];
+    const catch3 = fishTypes[Math.floor(Math.random() * fishTypes.length)];
+
+    const totalPoints = catch1.points + catch2.points + catch3.points;
+    const multiplier = totalPoints / 100;
+    const winAmount = betAmount * multiplier;
+
+    return {
+      game: 'Sea Striker',
+      catches: [catch1, catch2, catch3],
+      totalPoints,
+      multiplier,
+      betAmount,
+      winAmount,
+      result: totalPoints > 50 ? 'BIG CATCH' : 'CATCH',
+    };
+  }
+
+  // Ocean King (Fish Table)
+  static playOceanKing(betAmount) {
+    const creatures = [
+      { symbol: '🐟', points: 15 },
+      { symbol: '🦐', points: 30 },
+      { symbol: '🦞', points: 60 },
+      { symbol: '🐚', points: 80 },
+      { symbol: '👑', points: 300 }, // King
+    ];
+
+    const netSize = Math.floor(Math.random() * 6) + 3; // 3-8 catches
+    let totalPoints = 0;
+    const catches = [];
+
+    for (let i = 0; i < netSize; i++) {
+      const creature = creatures[Math.floor(Math.random() * creatures.length)];
+      catches.push(creature);
+      totalPoints += creature.points;
+    }
+
+    const multiplier = totalPoints / 100;
+    const winAmount = betAmount * multiplier;
+
+    return {
+      game: 'Ocean King',
+      catches,
+      netSize,
+      totalPoints,
+      multiplier,
+      betAmount,
+      winAmount,
+      result: totalPoints > 200 ? 'JACKPOT' : 'WIN',
+    };
+  }
+
+  // Tidal Treasures (Fish Table)
+  static playTidalTreasures(betAmount) {
+    const treasures = [
+      { symbol: '💎', value: 50 },
+      { symbol: '🏺', value: 75 },
+      { symbol: '⚔️', value: 100 },
+      { symbol: '👑', value: 200 },
+      { symbol: '🗝️', value: 500 }, // Treasure chest key
+    ];
+
+    const diveDepth = Math.floor(Math.random() * 5) + 1;
+    let totalValue = 0;
+    const treasureFound = [];
+
+    for (let i = 0; i < diveDepth; i++) {
+      const treasure = treasures[Math.floor(Math.random() * treasures.length)];
+      treasureFound.push(treasure);
+      totalValue += treasure.value;
+    }
+
+    const multiplier = totalValue / 100;
+    const winAmount = betAmount * multiplier;
+
+    return {
+      game: 'Tidal Treasures',
+      treasureFound,
+      diveDepth,
+      totalValue,
+      multiplier,
+      betAmount,
+      winAmount,
+      result: totalValue > 300 ? 'TREASURE FOUND' : 'DIVING SUCCESS',
+    };
+  }
+
+  // Mermaid Riches (Fish Table)
+  static playMermaidRiches(betAmount) {
+    const rewards = [
+      { symbol: '🧜‍♀️', value: 80, rarity: 'common' },
+      { symbol: '🐠', value: 40, rarity: 'common' },
+      { symbol: '🦑', value: 120, rarity: 'rare' },
+      { symbol: '💍', value: 250, rarity: 'very_rare' },
+      { symbol: '👑', value: 500, rarity: 'legendary' },
+    ];
+
+    const catches = Array.from({ length: Math.floor(Math.random() * 6) + 2 }, () => rewards[Math.floor(Math.random() * rewards.length)]);
+
+    const totalValue = catches.reduce((sum, catch_) => sum + catch_.value, 0);
+    const multiplier = totalValue / 100;
+    const winAmount = betAmount * multiplier;
+
+    return {
+      game: 'Mermaid Riches',
+      catches,
+      totalValue,
+      multiplier,
+      betAmount,
+      winAmount,
+      result: totalValue > 400 ? 'GOLDEN' : 'WIN',
+    };
+  }
+
+  // Pirate Plunder (Fish Table)
+  static playPiratePlunder(betAmount) {
+    const loot = [
+      { symbol: '🪙', value: 20 },
+      { symbol: '💰', value: 60 },
+      { symbol: '🏴‍☠️', value: 150 },
+      { symbol: '🗺️', value: 100 },
+      { symbol: '💎', value: 300 },
+    ];
+
+    const shipSailCount = Math.floor(Math.random() * 8) + 2;
+    let totalLoot = 0;
+    const plunder = [];
+
+    for (let i = 0; i < shipSailCount; i++) {
+      const item = loot[Math.floor(Math.random() * loot.length)];
+      plunder.push(item);
+      totalLoot += item.value;
+    }
+
+    const multiplier = totalLoot / 100;
+    const winAmount = betAmount * multiplier;
+
+    return {
+      game: 'Pirate Plunder',
+      plunder,
+      shipSailCount,
+      totalLoot,
+      multiplier,
+      betAmount,
+      winAmount,
+      result: totalLoot > 400 ? 'TREASURE SHIP' : 'PLUNDER',
+    };
+  }
+
+  // ===== CLASSIC GAMES =====
+
+  // Slots game logic (Original)
   static playSlots(betAmount) {
-    const symbols = ['🍎', '🍊', '🍇', '🍓', '💎', '7️⃣'];
+    const symbols = ['🎰', '🍎', '🍊', '🍌', '💎', '7️⃣'];
     const reel1 = symbols[Math.floor(Math.random() * symbols.length)];
     const reel2 = symbols[Math.floor(Math.random() * symbols.length)];
     const reel3 = symbols[Math.floor(Math.random() * symbols.length)];
 
     let multiplier = 0;
     if (reel1 === reel2 && reel2 === reel3) {
-      // Three of a kind - Triple win
       multiplier = reel1 === '💎' ? 10 : reel1 === '7️⃣' ? 8 : 3;
     } else if (reel1 === reel2 || reel2 === reel3) {
-      // Two of a kind - Double win
       multiplier = 2;
     }
 
     const winAmount = betAmount * multiplier;
     return {
+      game: 'Classic Slots',
       reels: [reel1, reel2, reel3],
       multiplier,
       betAmount,
@@ -28,7 +359,7 @@ class GameResult {
     };
   }
 
-  // Blackjack game logic (simplified)
+  // Blackjack game logic (Original)
   static playBlackjack(betAmount) {
     const getCardValue = () => Math.floor(Math.random() * 13) + 1;
     const getCards = (num) => Array.from({ length: num }, getCardValue);
@@ -72,6 +403,7 @@ class GameResult {
 
     const winAmount = betAmount * multiplier;
     return {
+      game: 'Blackjack',
       playerCards,
       dealerCards,
       playerScore,
@@ -83,9 +415,9 @@ class GameResult {
     };
   }
 
-  // Roulette game logic
+  // Roulette game logic (Original)
   static playRoulette(betAmount, betType) {
-    const spinNumber = Math.floor(Math.random() * 37); // 0-36
+    const spinNumber = Math.floor(Math.random() * 37);
     const isRed = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36].includes(spinNumber);
     const isEven = spinNumber !== 0 && spinNumber % 2 === 0;
 
@@ -111,6 +443,7 @@ class GameResult {
 
     const winAmount = betAmount * multiplier;
     return {
+      game: 'Roulette',
       spinNumber,
       betType,
       result,
@@ -121,76 +454,12 @@ class GameResult {
     };
   }
 
-  // Lucky 7 game logic
-  static playLucky7(betAmount) {
-    const num1 = Math.floor(Math.random() * 10);
-    const num2 = Math.floor(Math.random() * 10);
-    const num3 = Math.floor(Math.random() * 10);
-
-    let multiplier = 0;
-    let result = 'LOSS';
-
-    const count7 = [num1, num2, num3].filter((n) => n === 7).length;
-
-    if (count7 === 3) {
-      multiplier = 50; // LUCKY 7 JACKPOT!
-      result = 'JACKPOT';
-    } else if (count7 === 2) {
-      multiplier = 10;
-      result = 'WIN';
-    } else if (count7 === 1) {
-      multiplier = 2;
-      result = 'WIN';
-    }
-
-    const winAmount = betAmount * multiplier;
-    return {
-      numbers: [num1, num2, num3],
-      count7,
-      result,
-      multiplier,
-      betAmount,
-      winAmount,
-    };
-  }
-
-  // Diamond Rush game logic
-  static playDiamondRush(betAmount) {
-    const grid = Array.from({ length: 9 }, () => Math.floor(Math.random() * 100));
-    const diamondCount = grid.filter((n) => n > 80).length;
-
-    let multiplier = 0;
-    let result = 'LOSS';
-
-    if (diamondCount >= 7) {
-      multiplier = 20;
-      result = 'EXCELLENT';
-    } else if (diamondCount >= 5) {
-      multiplier = 5;
-      result = 'GREAT';
-    } else if (diamondCount >= 3) {
-      multiplier = 2;
-      result = 'WIN';
-    }
-
-    const winAmount = betAmount * multiplier;
-    return {
-      grid,
-      diamondCount,
-      result,
-      multiplier,
-      betAmount,
-      winAmount,
-    };
-  }
-
   static async recordResult(userId, gameId, gameType, betAmount, winAmount, result) {
     const queryResult = await pool.query(
       'INSERT INTO game_results (user_id, game_id, amount_bet, amount_won, result, game_type) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
       [userId, gameId, betAmount, winAmount, result, gameType]
     );
 
-    // Update wallet
     const netChange = winAmount - betAmount;
     await Wallet.updateBalance(userId, netChange);
 

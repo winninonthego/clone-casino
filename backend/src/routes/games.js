@@ -2,57 +2,154 @@ const express = require('express');
 const router = express.Router();
 const GameResult = require('../models/GameResult');
 const Wallet = require('../models/Wallet');
-const Game = require('../models/Game');
 const authMiddleware = require('../middleware/auth');
 
 // Get all games
 router.get('/', async (req, res) => {
   try {
     const games = [
+      // SLOT GAMES
       {
         id: 1,
-        name: 'Slots',
-        description: 'Classic slot machine with exciting payouts',
-        image: '🎰',
+        category: 'slots',
+        name: 'Buffalo Gold',
+        description: 'Wild buffalo roaming the plains',
+        image: '🦬',
         minBet: 1,
         maxBet: 1000,
         rtp: 0.96,
       },
       {
         id: 2,
+        category: 'slots',
+        name: 'Dragons Gold',
+        description: 'Ancient dragons guarding treasures',
+        image: '🐉',
+        minBet: 1,
+        maxBet: 1000,
+        rtp: 0.97,
+      },
+      {
+        id: 3,
+        category: 'slots',
+        name: 'Panda Gold',
+        description: 'Gentle pandas in bamboo forests',
+        image: '🐼',
+        minBet: 2,
+        maxBet: 800,
+        rtp: 0.95,
+      },
+      {
+        id: 4,
+        category: 'slots',
+        name: 'Wild West',
+        description: 'Dusty saloons and outlaws',
+        image: '🤠',
+        minBet: 1,
+        maxBet: 1000,
+        rtp: 0.96,
+      },
+      {
+        id: 5,
+        category: 'slots',
+        name: 'Golden Coins',
+        description: 'Ancient riches and treasures',
+        image: '🪙',
+        minBet: 2,
+        maxBet: 500,
+        rtp: 0.95,
+      },
+      {
+        id: 6,
+        category: 'slots',
+        name: 'Rainbow Riches',
+        description: 'Leprechaun gold at the end of rainbow',
+        image: '🌈',
+        minBet: 1,
+        maxBet: 1000,
+        rtp: 0.96,
+      },
+      // FISH TABLE GAMES
+      {
+        id: 7,
+        category: 'fish',
+        name: 'Sea Striker',
+        description: 'Hunt exotic fish and sea creatures',
+        image: '🎣',
+        minBet: 1,
+        maxBet: 500,
+        rtp: 0.94,
+      },
+      {
+        id: 8,
+        category: 'fish',
+        name: 'Ocean King',
+        description: 'Catch the legendary ocean king',
+        image: '👑',
+        minBet: 2,
+        maxBet: 1000,
+        rtp: 0.95,
+      },
+      {
+        id: 9,
+        category: 'fish',
+        name: 'Tidal Treasures',
+        description: 'Dive deep for underwater treasures',
+        image: '💎',
+        minBet: 1,
+        maxBet: 500,
+        rtp: 0.93,
+      },
+      {
+        id: 10,
+        category: 'fish',
+        name: 'Mermaid Riches',
+        description: 'Enchanted mermaids guard riches',
+        image: '🧜‍♀️',
+        minBet: 2,
+        maxBet: 800,
+        rtp: 0.94,
+      },
+      {
+        id: 11,
+        category: 'fish',
+        name: 'Pirate Plunder',
+        description: 'Sail with pirates seeking treasure',
+        image: '🏴‍☠️',
+        minBet: 1,
+        maxBet: 1000,
+        rtp: 0.95,
+      },
+      // CLASSIC GAMES
+      {
+        id: 12,
+        category: 'classic',
+        name: 'Classic Slots',
+        description: 'Traditional 3-reel slot machine',
+        image: '🎰',
+        minBet: 1,
+        maxBet: 500,
+        rtp: 0.95,
+      },
+      {
+        id: 13,
+        category: 'classic',
         name: 'Blackjack',
-        description: 'Beat the dealer and win big',
+        description: 'Beat the dealer',
         image: '🃏',
         minBet: 5,
         maxBet: 500,
         rtp: 0.99,
       },
       {
-        id: 3,
+        id: 14,
+        category: 'classic',
         name: 'Roulette',
-        description: 'Spin the wheel and test your luck',
+        description: 'Spin the wheel of fortune',
         image: '🎡',
         minBet: 1,
         maxBet: 1000,
         rtp: 0.973,
-      },
-      {
-        id: 4,
-        name: 'Lucky 7',
-        description: 'Match the sevens for massive jackpots',
-        image: '7️⃣',
-        minBet: 1,
-        maxBet: 500,
-        rtp: 0.95,
-      },
-      {
-        id: 5,
-        name: 'Diamond Rush',
-        description: 'Rush to collect diamonds and win rewards',
-        image: '💎',
-        minBet: 2,
-        maxBet: 800,
-        rtp: 0.94,
       },
     ];
     res.json(games);
@@ -72,42 +169,56 @@ router.post('/:gameId/play', authMiddleware, async (req, res) => {
       return res.status(400).json({ error: 'Invalid bet amount' });
     }
 
-    // Check wallet balance
     const wallet = await Wallet.getByUserId(userId);
     if (!wallet || wallet.balance < amount) {
       return res.status(400).json({ error: 'Insufficient balance' });
     }
 
     let gameResult;
-    switch (parseInt(gameId)) {
-      case 1:
-        gameResult = GameResult.playSlots(amount);
-        break;
-      case 2:
-        gameResult = GameResult.playBlackjack(amount);
-        break;
-      case 3:
-        gameResult = GameResult.playRoulette(amount, betType || 'red');
-        break;
-      case 4:
-        gameResult = GameResult.playLucky7(amount);
-        break;
-      case 5:
-        gameResult = GameResult.playDiamondRush(amount);
-        break;
-      default:
-        return res.status(404).json({ error: 'Game not found' });
-    }
+    const gameId_int = parseInt(gameId);
 
-    // Record result and update wallet
-    const gameTypeMap = { 1: 'slots', 2: 'blackjack', 3: 'roulette', 4: 'lucky7', 5: 'diamond_rush' };
-    await GameResult.recordResult(userId, gameId, gameTypeMap[gameId], amount, gameResult.winAmount, gameResult.result);
+    // SLOT GAMES
+    if (gameId_int === 1) gameResult = GameResult.playBuffaloGold(amount);
+    else if (gameId_int === 2) gameResult = GameResult.playDragonsGold(amount);
+    else if (gameId_int === 3) gameResult = GameResult.playPandaGold(amount);
+    else if (gameId_int === 4) gameResult = GameResult.playWildWest(amount);
+    else if (gameId_int === 5) gameResult = GameResult.playGoldenCoins(amount);
+    else if (gameId_int === 6) gameResult = GameResult.playRainbowRiches(amount);
+    // FISH GAMES
+    else if (gameId_int === 7) gameResult = GameResult.playSeaStriker(amount);
+    else if (gameId_int === 8) gameResult = GameResult.playOceanKing(amount);
+    else if (gameId_int === 9) gameResult = GameResult.playTidalTreasures(amount);
+    else if (gameId_int === 10) gameResult = GameResult.playMermaidRiches(amount);
+    else if (gameId_int === 11) gameResult = GameResult.playPiratePlunder(amount);
+    // CLASSIC GAMES
+    else if (gameId_int === 12) gameResult = GameResult.playSlots(amount);
+    else if (gameId_int === 13) gameResult = GameResult.playBlackjack(amount);
+    else if (gameId_int === 14) gameResult = GameResult.playRoulette(amount, betType || 'red');
+    else return res.status(404).json({ error: 'Game not found' });
 
-    // Get updated wallet
+    const gameTypeMap = {
+      1: 'buffalo_gold',
+      2: 'dragons_gold',
+      3: 'panda_gold',
+      4: 'wild_west',
+      5: 'golden_coins',
+      6: 'rainbow_riches',
+      7: 'sea_striker',
+      8: 'ocean_king',
+      9: 'tidal_treasures',
+      10: 'mermaid_riches',
+      11: 'pirate_plunder',
+      12: 'classic_slots',
+      13: 'blackjack',
+      14: 'roulette',
+    };
+
+    await GameResult.recordResult(userId, gameId, gameTypeMap[gameId_int], amount, gameResult.winAmount, gameResult.result);
+
     const updatedWallet = await Wallet.getByUserId(userId);
 
     res.json({
-      message: gameResult.result === 'LOSS' ? 'Sorry, you lost!' : `Congratulations! You won $${gameResult.winAmount}!`,
+      message: gameResult.result === 'LOSS' ? 'Sorry, you lost!' : `Congratulations! You won $${gameResult.winAmount.toFixed(2)}!`,
       gameResult,
       newBalance: updatedWallet.balance,
     });
